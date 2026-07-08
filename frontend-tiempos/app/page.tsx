@@ -1,13 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { 
-  SignInButton, 
-  SignedIn, 
-  SignedOut, 
-  UserButton, 
-  useAuth 
-} from '@clerk/nextjs';
+import { SignInButton, UserButton, useAuth, Show } from '@clerk/nextjs';
+import { useState, useEffect } from "react";
 
 interface Objetivo {
   id: number;
@@ -17,6 +11,7 @@ interface Objetivo {
   estado: string;
   usuario_id?: string; // NUEVO: El modelo ahora acepta al dueño
 }
+
 
 export default function Home() {
   const [objetivos, setObjetivos] = useState<Objetivo[]>([]);
@@ -237,20 +232,20 @@ export default function Home() {
         </h1>
         
         <div className="flex items-center gap-4">
-          <SignedOut>
+          <Show when="signed-out">
             <SignInButton mode="modal">
               <button className="bg-purple-600/90 hover:bg-purple-500 text-white font-bold py-2.5 px-6 rounded-xl transition duration-300 shadow-[0_0_20px_rgba(147,51,234,0.3)] border border-purple-500/50">
                 Iniciar Sesión
               </button>
             </SignInButton>
-          </SignedOut>
-          <SignedIn>
+          </Show>
+          <Show when="signed-in">
             <UserButton appearance={{ elements: { userButtonAvatarBox: "w-12 h-12 border-2 border-purple-500/50" } }} />
-          </SignedIn>
+          </Show>
         </div>
       </div>
 
-      <SignedOut>
+      <Show when="signed-out">
         <div className="flex flex-col items-center justify-center mt-20 p-10 bg-[#121212] rounded-3xl border border-gray-800/50 max-w-2xl mx-auto shadow-2xl text-center relative overflow-hidden">
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
           <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
@@ -267,9 +262,9 @@ export default function Home() {
             </button>
           </SignInButton>
         </div>
-      </SignedOut>
+      </Show>
 
-      <SignedIn>
+      <Show when="signed-in">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-10">
           
           <div className="bg-[#121212] p-6 rounded-2xl border border-gray-800/50 shadow-lg flex items-center gap-6 relative overflow-hidden">
@@ -429,7 +424,7 @@ export default function Home() {
             </div>
           </div>
         )}
-      </SignedIn>
+      </Show>
     </main>
   );
 }
