@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { 
+  SignInButton, 
+  SignedIn, 
+  SignedOut, 
+  UserButton, 
+  useAuth 
+} from '@clerk/nextjs';
 
 interface Objetivo {
   id: number;
