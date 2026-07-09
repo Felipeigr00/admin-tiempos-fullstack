@@ -68,10 +68,24 @@ export default function Home() {
     setEditandoId(null);
   };
 
-  const guardarObjetivo = async (e: React.FormEvent) => {
+const guardarObjetivo = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // NUEVO: si la sesión de Clerk todavía no está lista, no dejamos guardar
+    if (!isLoaded || !userId) {
+      alert("Tu sesión aún se está cargando, espera un segundo e intenta de nuevo.");
+      return;
+    }
+
     if (editandoId) {
-      const objActualizado = { titulo, descripcion, fecha_objetivo: fecha, estado: estadoEditando };
+      // FIX: ahora incluimos usuario_id también al actualizar
+      const objActualizado = { 
+        titulo, 
+        descripcion, 
+        fecha_objetivo: fecha, 
+        estado: estadoEditando,
+        usuario_id: userId 
+      };
       try {
         const res = await fetch(`https://api-tiempos.onrender.com/objetivos/${editandoId}`, {
           method: "PUT",
@@ -84,7 +98,6 @@ export default function Home() {
         }
       } catch (error) { console.error("Error al actualizar:", error); }
     } else {
-      // NUEVO: Al crear una tarea, le pegamos tu ID como si fuera una etiqueta
       const nuevoObjetivo = { 
         titulo, 
         descripcion, 
@@ -331,8 +344,7 @@ export default function Home() {
             <input type="text" placeholder="Título (ej. Estudiar AWS)" required value={titulo} onChange={(e) => setTitulo(e.target.value)} className="flex-1 p-3 bg-black/40 border border-gray-800 rounded-xl text-gray-200 placeholder-gray-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition" />
             <input type="text" placeholder="Descripción breve..." value={descripcion} onChange={(e) => setDescripcion(e.target.value)} className="flex-1 p-3 bg-black/40 border border-gray-800 rounded-xl text-gray-200 placeholder-gray-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition" />
             <input type="date" required value={fecha} onChange={(e) => setFecha(e.target.value)} className="p-3 bg-black/40 border border-gray-800 rounded-xl text-gray-400 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition" style={{ colorScheme: 'dark' }} />
-            <button type="submit" className={`${editandoId ? "bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]" : "bg-purple-600/90 hover:bg-purple-500 shadow-[0_0_20px_rgba(147,51,234,0.3)]"} text-white font-bold py-3 px-8 rounded-xl transition duration-300`}>
-              {editandoId ? "Actualizar" : "Guardar"}
+            <button type="submit" disabled={!isLoaded} className={`${editandoId ? "bg-emerald-600..." : "bg-purple-600/90..."} text-white font-bold py-3 px-8 rounded-xl transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed`}>
             </button>
           </form>
         </div>

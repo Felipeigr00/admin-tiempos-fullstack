@@ -34,6 +34,8 @@ def leer_raiz():
 # 1. Crear un nuevo objetivo (POST)
 @app.post("/objetivos/", response_model=schemas.ObjetivoResponse)
 def crear_objetivo(objetivo: schemas.ObjetivoCreate, db: Session = Depends(get_db)):
+    if not objetivo.usuario_id:
+        raise HTTPException(status_code=400, detail="usuario_id es requerido para crear un objetivo")
     nuevo_objetivo = BaseD.Objetivo(**objetivo.model_dump())
     db.add(nuevo_objetivo)
     db.commit()
